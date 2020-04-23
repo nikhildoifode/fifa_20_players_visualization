@@ -15,17 +15,15 @@ Visualized the dimension reduced data for randomly sampled and Adaptively sample
 
 # Steps to start the application
 1. Start the server
-cd server
-python3 app.py
-
+cd server  
+python3 app.py  
+  
 2. Start the client
-cd client
-npm install
-npm run serve
+cd client  
+npm install  
+npm run serve  
 
 # References:
-https://sofifa.com/
-
-https://www.kaggle.com/stefanoleone992/fifa-20-complete-player-dataset/
-
-https://bootstrap-vue.js.org/docs
+https://sofifa.com/  
+https://www.kaggle.com/stefanoleone992/fifa-20-complete-player-dataset/  
+https://bootstrap-vue.js.org/docs  
