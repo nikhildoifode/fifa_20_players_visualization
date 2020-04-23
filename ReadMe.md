@@ -14,11 +14,13 @@ Visualized the dimension reduced data for randomly sampled and Adaptively sample
 2. Node
 
 # Steps to start the application
-1. Start the server  
+1. Starting the server  
+// Open new terminal  
 cd server  
 python3 app.py  
   
-2. Start the client  
+2. Starting the client  
+// Open new terminal  
 cd client  
 npm install  
 npm run serve  
