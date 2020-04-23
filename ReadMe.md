@@ -25,4 +25,7 @@ npm run serve
 
 # References:
 https://sofifa.com/
+
 https://www.kaggle.com/stefanoleone992/fifa-20-complete-player-dataset/
+
+https://bootstrap-vue.js.org/docs
