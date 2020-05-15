@@ -12,9 +12,11 @@ def index():
 
 @app.route("/displayVisualization")
 def displayCharts():
-    retData = []
-    return jsonify(data = retData)
+    return jsonify(data = resultData)
 
 
 if __name__ == "__main__":
+    global resultData
+    obj = utilityFunctions()
+    resultData = obj.setData()
     app.run(debug = True)
