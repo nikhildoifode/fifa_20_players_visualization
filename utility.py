@@ -14,6 +14,7 @@ class utilityFunctions(object):
     def readCSV(self):
         dataframe = pd.read_csv("players_20.csv")
         dataframe.fillna(0, inplace=True)
+
         dataframe['short_name'] = dataframe['short_name'].apply(lambda x: unidecode.unidecode(x))
         dataframe['nationality'] = dataframe['nationality'].apply(lambda x: unidecode.unidecode(x))
         dataframe['club'] = dataframe['club'].apply(lambda x: unidecode.unidecode(x))
@@ -44,11 +45,11 @@ class utilityFunctions(object):
 
     def PCA(self, data, sampleData, labels):
         pca = PCA()
-        # data_normalized = normalize(sampleData, norm='l2')
-        # data_scaled = scale(sampleData)
-        data_scaled = MinMaxScaler().fit_transform(sampleData)
-        pca.fit(data_scaled)
-        transformedData = pca.transform(data_scaled)
+        # data_changed = normalize(sampleData, norm='l2')
+        # data_changed = scale(sampleData)
+        data_changed = MinMaxScaler().fit_transform(sampleData)
+        pca.fit(data_changed)
+        transformedData = pca.transform(data_changed)
 
         pcaData = []
         for i, row in enumerate(transformedData):
@@ -79,4 +80,4 @@ class utilityFunctions(object):
 # sampleData, clusterLabels = ut.noSampling(modifiedData)
 # resultData = ut.PCA(data, sampleData, clusterLabels)
 
-# print(resultData)
+# print(data)
