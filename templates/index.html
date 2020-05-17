@@ -3,7 +3,7 @@
 <html>
 	<head>
 		<link rel="stylesheet" href="./static/style.css">
-		<script src="http://d3js.org/d3.v5.min.js"></script>
+		<script src="http://d3js.org/d3.v4.min.js"></script>
 
 		<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.0.0-beta1/jquery.min.js"></script> -->
 		<!-- <script src="https://code.jquery.com/ui/1.11.3/jquery-ui.min.js"></script> -->
@@ -12,7 +12,7 @@
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
 		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
-
+		<script src="./static/parcoords.standalone.js"></script>
 		<title> Visualization Project </title>
 	</head>
 	<body>
@@ -35,7 +35,8 @@
 		</div> -->
 		<button class="button" onclick="generateParallelCo()"> Display Parallel Coordinates</button>
 		<button class="button" onclick="generateViz()"> Display Viz</button>
-		<div class="viz"></div>
+		<div id="viz"></div>
+		<div id="example" class="parcoords" style="width:750px;height:450px"></div>
 		<script src="./static/main.js"></script>
 	</body>
 </html>
