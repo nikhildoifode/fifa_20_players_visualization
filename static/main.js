@@ -1,6 +1,6 @@
-var margin = {top: 30, right: 10, bottom: 10, left: 10},
-width = 960 - margin.left - margin.right,
-height = 500 - margin.top - margin.bottom;
+var margin = {top: 0, right: 0, bottom: 0, left: 0},
+width = 842 - margin.left - margin.right,
+height = 405 - margin.top - margin.bottom;
 
 var SCRIPT_ROOT = window.location.href
 
@@ -8,6 +8,7 @@ function generateViz() {
     $.getJSON(SCRIPT_ROOT + '/displayVisualization',
     (d) => {
         createGraph(d.data)
+        tabulate(d.data)
     })
 }
 
@@ -139,6 +140,7 @@ function generateParallelCo() {
 }
 
 
+
 function createGraph(data) {
     d3.select(".viz").html('')
 
@@ -146,9 +148,9 @@ function createGraph(data) {
     var svg = d3.select(".viz")
     .append("svg")
     .attr("width", width + margin.left + margin.right)
-    .attr("height", height + margin.top + margin.bottom + 20)
-    .style('margin-left', '13%')
-    .style('padding', '1px 70px')
+    .attr("height", height + margin.top + margin.bottom)
+    .style('margin-left', '0%')
+    .style('padding', '0px 0px')
     .append("g")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
 
@@ -253,4 +255,8 @@ function createGraph(data) {
     .attr("dy", ".35em")
     .style("text-anchor", "end")
     .text((d) => { return "Cluster " + d + " -" })
+
+}
+function generateSpiderChart() {
+
 }

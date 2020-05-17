@@ -10,9 +10,11 @@ def index():
     return render_template("index.html")
 
 
+
 @app.route("/displayVisualization")
 def displayCharts():
     return jsonify(data = resultData)
+
 
 
 if __name__ == "__main__":

@@ -1,41 +1,52 @@
 <!DOCTYPE HTML>
 <meta charset="utf-8">
 <html>
-	<head>
-		<link rel="stylesheet" href="./static/style.css">
-		<script src="http://d3js.org/d3.v5.min.js"></script>
 
-		<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.0.0-beta1/jquery.min.js"></script> -->
-		<!-- <script src="https://code.jquery.com/ui/1.11.3/jquery-ui.min.js"></script> -->
+    <head>
+        <link rel="stylesheet" href="./static/style.css">
+        <script src="http://d3js.org/d3.v4.min.js"></script>
+        <script src="./static/RadarChart.js"></script>
+        <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.0.0-beta1/jquery.min.js"></script> -->
+        <!-- <script src="https://code.jquery.com/ui/1.11.3/jquery-ui.min.js"></script> -->
 
-		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
-		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
-		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
 
-		<title> Visualization Project </title>
-	</head>
-	<body>
-		<!-- <div class="container-fluid">
-			<div class="row">
-				<div class="col-sm-5"> <h3>FIFA 20 Players Data Visualization</h3> </div>
-				<div class="col-sm-7">.col-sm-7</div>
-			</div>
+        <title> Visualization Project </title>
+    </head>
+    <body>
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-5"> <h3>FIFA 20 Players Data Visualization</h3> </div>
+                <div class="col-7">.col-sm-7</div>
+            </div>
 
-			<div class="row mainRow">
-				<div class="col-sm-6" style="border: ridge;">1 of 2</div>
-				<div id="2of2" class="col-sm-6" style="border: ridge;">2 of 2</div>
-			</div>
+            <div class="row mainRow h-100">
+                <div class="col-8 h-75 viz" style="border: none;"></div>
+                <div id="table" class="col-4 h-75" style="border: none;"></div>
+                <div class="w-100"></div>
+                <div class="col-4 h-25" id="chart0"></div>
+                <div class="col-4 h-25" id="chart1"></div>
+                <div class="col-4 h-25" id="chart2"></div>
+            </div>
+        </div>
+        <!-- <button class="button" onclick="generateParallelCo()"> Display Parallel Coordinates</button> -->
 
-			<div class="row secondRow">
-				<div class="col-sm-4" style="border: ridge;">1 of 3</div>
-				<div class="col-sm-4" style="border: ridge;">2 of 3</div>
-				<div class="col-sm-4" style="border: ridge;">4 of 3</div>
-			</div>
-		</div> -->
-		<button class="button" onclick="generateParallelCo()"> Display Parallel Coordinates</button>
-		<button class="button" onclick="generateViz()"> Display Viz</button>
-		<div class="viz"></div>
+                <!-- <div class="viz col-lg"></div> -->
+        <!-- <button class="button" onclick="generateSpiderChart()"> Spider Chart</button> -->
+
+<!--         <script src="./static/main.js"></script>
+        <script>generateParallelCo()</script> -->
+ 
+<!-- 		<button class="button" onclick="generateParallelCo()"> Display Parallel Coordinates</button>
+		<button class="button" onclick="generateViz()"> Display Viz</button> -->
+		<!-- <div class="viz"></div> -->
 		<script src="./static/main.js"></script>
-	</body>
+
+    <script type="text/javascript" src="./static/script.js"></script>
+    <script>generateViz()</script>
+    </body>
+
 </html>
