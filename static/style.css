@@ -30,3 +30,35 @@ svg {
 	cursor: move;
 }
 
+.list-group-item {
+    padding: 0.5rem 0.5rem;
+    margin-bottom: -10px;
+    font-size: 13px;
+}
+
+
+li{
+        padding: 1px 1px 1px 1px;
+}
+
+/* table tbody, table thead
+{
+    display: block;
+}
+
+table tbody 
+{
+   overflow: auto;
+   height: 355px;
+   width: 411px;
+}
+
+th
+{
+    width: 132px;
+}
+
+td
+{
+    width: 135px;
+} */

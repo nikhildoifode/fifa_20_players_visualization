@@ -1,10 +1,10 @@
 
 var RadarChart = {
-  draw: function(id, d, options){
+  draw: function(id, ds, options, type){
   var cfg = {
-     radius: 3,
-     w: 150,
-     h: 150,
+     radius: 4,
+     w: 175,
+     h: 175,
      factor: 1,
      factorLegend: .85,
      levels: 3,
@@ -16,9 +16,9 @@ var RadarChart = {
      TranslateY: 25,
      ExtraWidthX: 50,
      ExtraWidthY: 50,
-     color: d3.scaleOrdinal(d3.schemeCategory10)
+     color: '#009933'
     };
-    
+
     if('undefined' !== typeof options){
       for(var i in options){
         if('undefined' !== typeof options[i]){
@@ -26,11 +26,80 @@ var RadarChart = {
         }
       }
     }
+
+    if(type == 'attack'){
+    var d = [
+          [
+            {axis:"Dribbling",value:ds.dribbling},
+            {axis:"Shooting",value:ds.shooting},
+            {axis:"Finishing",value:ds.attacking_finishing},
+            {axis:"Volleys",value:ds.attacking_volleys},
+            {axis:"Shot Curve",value:ds.skill_curve},
+            {axis:"Heading",value:ds.attacking_heading_accuracy},
+            {axis:"Freekicks",value:ds.skill_fk_accuracy},
+            {axis:"Crossing",value:ds.attacking_crossing},
+            {axis:"Long Passing",value:ds.skill_long_passing},
+            {axis:"Passing",value:ds.passing},
+            {axis:"Short Passing",value:ds.attacking_short_passing},
+            {axis:"Ball Control",value:ds.skill_ball_control},
+          ]
+        ];
+    } else if (type=='defense'){
+        var d = [
+          [
+            {axis:"Defending",value:ds.defending},
+            {axis:"Interception",value:ds.mentality_interceptions},
+            {axis:"Positioning",value:ds.mentality_positioning},
+            {axis:"Marking",value:ds.defending_marking},
+            {axis:"Standing tackle",value:ds.defending_standing_tackle},
+            {axis:"Sliding tackle",value:ds.defending_sliding_tackle},
+            {axis:"Strength",value:ds.power_strength},
+            {axis:"Jumping",value:ds.power_jumping},
+            {axis:"Reactions",value:ds.movement_reactions},
+            {axis:"Aggression",value:ds.mentality_aggression},
+            {axis:"Composure",value:ds.mentality_composure},
+            {axis:"Physic",value:ds.physic},
+          ]
+        ];
+        cfg.color = '#33BBFF'
+    } else if (type=='physical'){
+        var d = [
+          [
+            {axis:"Pace",value:ds.pace},
+            {axis:"Acceleration",value:ds.movement_acceleration},
+            {axis:"Stamina",value:ds.power_stamina},
+            {axis:"Agility",value:ds.movement_agility},
+            {axis:"Sprint Speed",value:ds.movement_sprint_speed},
+            {axis:"Balance",value:ds.movement_balance},
+            {axis:"Shot Power",value:ds.power_shot_power},
+            {axis:"Long Shot Power",value:ds.power_long_shots},
+            {axis:"Vision",value:ds.mentality_vision},
+            {axis:"Penalties",value:ds.mentality_penalties},
+          ]
+        ];
+        cfg.color = '#800015'
+    } else if(type == 'keeper'){
+    var d = [
+          [
+            {axis:"Diving",value:ds.gk_diving},
+            {axis:"Handling",value:ds.gk_handling},
+            {axis:"Reflexes",value:ds.gk_reflexes},
+            {axis:"GK Positioning",value:ds.gk_positioning},
+            {axis:"Long Passing",value:ds.skill_long_passing},
+            {axis:"Short Passing",value:ds.attacking_short_passing},
+            {axis:"Kicking",value:ds.gk_kicking},
+            {axis:"GK Speed",value:ds.gk_speed},
+          ]
+        ];
+    }
+    else{
+        return;
+    }
     cfg.maxValue = 100;
     var allAxis = (d[0].map(function(i, j){return i.axis}));
     var total = allAxis.length;
     var radius = cfg.factor*Math.min(cfg.w/2, cfg.h/2);
-    var Format = d3.format(".1f");
+    // var Format = d3.format(".1f");
     d3.select(id).select("svg").remove();
     
     var g = d3.select(id)
@@ -75,7 +144,7 @@ var RadarChart = {
        .style("font-size", "10px")
        .attr("transform", "translate(" + (cfg.w/2-levelFactor + cfg.ToRight) + ", " + (cfg.h/2-levelFactor) + ")")
        .attr("fill", "#333333")
-       .text(Format((j+1)*cfg.maxValue/cfg.levels));
+       .text((j+1)*cfg.maxValue/cfg.levels);
     }
     
     series = 0;
@@ -123,7 +192,7 @@ var RadarChart = {
                      .append("polygon")
                      .attr("class", "radar-chart-serie"+series)
                      .style("stroke-width", "2px")
-                     .style("stroke", cfg.color(series))
+                     .style("stroke", cfg.color)
                      .attr("points",function(d) {
                          var str="";
                          for(var pti=0;pti<d.length;pti++){
@@ -131,7 +200,7 @@ var RadarChart = {
                          }
                          return str;
                       })
-                     .style("fill", function(j, i){return cfg.color(series)})
+                     .style("fill", function(j, i){return cfg.color})
                      .style("fill-opacity", cfg.opacityArea)
                      .on('mouseover', function (d){
                                         z = "polygon."+d3.select(this).attr("class");
@@ -170,7 +239,7 @@ var RadarChart = {
           return cfg.h/2*(1-(Math.max(j.value, 0)/cfg.maxValue)*cfg.factor*Math.cos(i*cfg.radians/total));
         })
         .attr("data-id", function(j){return j.axis})
-        .style("fill", cfg.color(series)).style("fill-opacity", .9)
+        .style("fill", cfg.color)
         .on('mouseover', function (d){
                     newX =  parseFloat(d3.select(this).attr('cx')) - 10;
                     newY =  parseFloat(d3.select(this).attr('cy')) - 5;
@@ -193,7 +262,7 @@ var RadarChart = {
         .on('mouseout', function(){
                     tooltip
                         .transition(200)
-                        .style('opacity', 0);
+                        .style('opacity', 1);
                     g.selectAll("polygon")
                         .transition(200)
                         .style("fill-opacity", cfg.opacityArea);
@@ -211,3 +280,38 @@ var RadarChart = {
                .style('font-size', '13px');
   }
 };
+
+var tabulate = function (data) {
+         var columns = ['sofifaid','playername','cluster']
+  var table = d3.select('#table').append('table')
+                .attr("class","table");
+	var thead = table.append('thead').attr("class","thead-dark")
+	var tbody = table.append('tbody')
+
+	thead.append('tr')
+	  .selectAll('th')
+	    .data(columns)
+	    .enter()
+	  .append('th')
+        .attr("scope","col")
+	    .text(function (d) { return d })
+
+	var rows = tbody.selectAll('tr')
+	    .data(data)
+	    .enter()
+	  .append('tr')
+
+	var cells = rows.selectAll('td')
+	    .data(function(row) {
+	    	return columns.map(function (column) {
+	    		return { column: column, value: row[column] }
+	      })
+      })
+      .enter()
+    .append('td')
+      .attr("scope","row")
+      .text(function (d) { return d.value })
+
+  return table;
+};
+

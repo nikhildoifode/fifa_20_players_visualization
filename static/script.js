@@ -1,5 +1,5 @@
-var w = 200,
-    h = 200;
+var w = 150,
+    h = 150;
 
 
 
@@ -28,13 +28,13 @@ var mycfg = {
   w: w,
   h: h,
   maxValue: 1,
-  levels: 6,
+  levels: 5,
   ExtraWidthX: 100
 }
 
 //Call function to draw the Radar chart
 //Will expect that data is in %'s
-RadarChart.draw("#chart0", d, mycfg);
-RadarChart.draw("#chart1", d, mycfg);
-RadarChart.draw("#chart2", d, mycfg);
+RadarChart.draw("#chart0", d, mycfg, "attack");
+RadarChart.draw("#chart1", d, mycfg, "defense");
+RadarChart.draw("#chart2", d, mycfg, "physical");
 
