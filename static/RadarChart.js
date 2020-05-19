@@ -278,6 +278,15 @@ var RadarChart = {
                .style('opacity', 0)
                .style('font-family', 'sans-serif')
                .style('font-size', '13px');
+               
+    d3.select(id)
+    .append("p")
+        .attr("x", (cfg.width))
+        .attr("y", 180)
+        .attr("text-anchor", "middle")
+        .attr("class", "text-center text-capitalize")
+        .style("text-decoration", "underline")
+        .text(type+" stats");
   }
 };
 

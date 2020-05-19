@@ -41,28 +41,6 @@ li{
         padding: 1px 1px 1px 1px;
 }
 
-/* table tbody, table thead
-{
-    display: block;
-}
-
-table tbody 
-{
-   overflow: auto;
-   height: 355px;
-   width: 411px;
-}
-
-th
-{
-    width: 132px;
-}
-
-td
-{
-    width: 135px;
-} */
-
 .parcoords > svg, .parcoords > canvas {
     font: 14px sans-serif;
     position: absolute;

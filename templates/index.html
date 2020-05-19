@@ -11,12 +11,12 @@
         table {
             visibility: hidden;
             position: absolute;
-            left: 5px;
+            left: 0px;
             font-family: sans-serif;
             font-size: 0.7em;
             display: block;
             overflow:auto;
-            height: 380px;
+            height: 381px;
             width: 95%;
         }
 
@@ -27,9 +27,15 @@
         }
 
         .non_brushed {
-            fill: #66B3FF;
-            opacity: 0.5;
+            fill: #5FA6ED;
+            opacity: 0.7;
         }
+
+.line {
+  fill: none;
+  stroke: steelblue;
+  stroke-width: 2px;
+}
 
 
     </style>
@@ -39,7 +45,7 @@
         <script src="./static/parcoords.standalone.js"></script>
         <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.0.0-beta1/jquery.min.js"></script> -->
         <!-- <script src="https://code.jquery.com/ui/1.11.3/jquery-ui.min.js"></script> -->
-
+        <script type="text/javascript" src="./static/script.js"></script>
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
@@ -55,12 +61,13 @@
                 <div class="col-7"></div>
             </div>
 
-            <div class="row mainRow h-100">
+            <div class="row mainRow h-100" style="margin-left:0.5px">
 <!--                 <div class="col-8 h-75 viz" style="border: none;"></div>
                 <div id="table" class="col-4 h-75" style="border: none;"></div> -->
 
 
-                <div id="chart" class="col-8 h-75"></div>
+                <div id="chart" class="col-8 h-75" 
+                style="border-style: solid; border-width: 1px;"></div>
                 <div class="col-4 h-75 table-responsive-sm" id="table">
                     <table class="table table-dark table-sm">
                         <tr>
@@ -69,315 +76,71 @@
                             <th scope="col">Club</th>
                             <th scope="col">Overall</th>
                             <th scope="col">Transfer Value</th>
-
                         </tr>
                     </table>
 
 
                     <div class="card" style="width: 95%;margin-top:0px;"id="card">
-                        <img class="card-img-top text-center" src="" alt="Card image cap" 
+                        <img class="card-img-top text-center" src="" alt="Player Image" 
                                 style="width:100px;height:100px;margin-left:140px">
                         <div class="card-body"></div>
-                       
-                        <!--     <a href="#" class="card-link">Card link</a>
-                                 <a href="#" class="card-link">Another link</a> -->
-
                     </div>
                 </div>
 
                 <div class="w-100" style="margin-top:10px;"></div>
-                
-                <div id="example" class="parcoords" style="width:1000px;height:220px"></div>
+                <div id="example" class="parcoords" style="width:1000px;height:240px;margin-top:25px"></div>
                 <div class="col" id="chart0" style="margin-top:35px"></div>
                 <div class="col" id="chart1" style="margin-top:35px"></div>
                 <div class="col" id="chart2" style="margin-top:35px"></div>
+                <div class="col" id="chart3" style="margin-top:35px"></div>
             </div>
         </div>
-        <!-- <button class="button" onclick="generateParallelCo()"> Display Parallel Coordinates</button> -->
 
-                <!-- <div class="viz col-lg"></div> -->
-        <!-- <button class="button" onclick="generateSpiderChart()"> Spider Chart</button> -->
 
-<!--         <script src="./static/main.js"></script>
-        <script>generateParallelCo()</script> -->
- 
-<!-- 		<button class="button" onclick="generateParallelCo()"> Display Parallel Coordinates</button>
-		<button class="button" onclick="generateViz()"> Display Viz</button> -->
-		<!-- <div class="viz"></div> -->
-		<script src="./static/main.js"></script>
+        <script src="./static/main.js"></script>
 
-    <script type="text/javascript" src="./static/script.js"></script>
-<!--     <script>generateViz()</script> -->
 
 
 
     <script type="text/javascript">
 
-        var margin = {top: 10, right: 0, bottom: 20, left: 10},
-            svg_dx = 800, 
-            svg_dy = 380,
-            plot_dx = svg_dx - margin.right - margin.left,
-            plot_dy = svg_dy - margin.top - margin.bottom;
+clearAllRadarCharts()
+d3.select("#table").style("visibility", "hidden")
+var ds ={{ data.value_data | safe }};
+var ds1 ={{ data.wage_data | safe }};
 
-        var x = d3.scaleLinear().range([margin.left, plot_dx]),
-            y = d3.scaleLinear().range([plot_dy, margin.top]);
+//Data
+var d = [
+          [
+            {axis:"Shooting",value:92},
+            {axis:"Dribbling",value:96},
+            {axis:"Passing",value:92},
+            {axis:"Crossing",value:88},
+            {axis:"Finishing",value:95},
+            {axis:"Heading",value:70},
+            {axis:"Short Passing",value:92},
+            {axis:"Volleys",value:88},
+            {axis:"Shot Curve",value:93},
+            {axis:"Freekick Acc",value:94},
+            {axis:"Long Passing",value:92},
+            {axis:"Ball Control",value:96},
+          ]
+        ];
 
-        var formatIncome = d3.format("$,");
+//Options for the Radar chart, other than default
+var mycfg = {
+  w: 150,
+  h: 150,
+  maxValue: 1,
+  levels: 5,
+  ExtraWidthX: 100
+}
 
-        var svg = d3.select("#chart")
-                    .append("svg")
-                    .attr("width", svg_dx)
-                    .attr("height", svg_dy);
-
-        //setup
-        clearAllRadarCharts()
-        d3.select("#table").style("visibility", "hidden")
-
-        d3.csv("/static/newPlayers.csv", d => {
-            var n = d.length;
-
-            var d_extent_x = d3.extent(d, d => +d.pca0),
-                d_extent_y = d3.extent(d, d => +d.pca1);
-
-            x.domain(d_extent_x);
-            y.domain(d_extent_y);
-
-            var axis_x = d3.axisBottom(x),
-                axis_y = d3.axisLeft(y);
-
-            svg.append("g")
-               .attr("id", "axis_x")
-               .attr("transform", "translate(0," + (plot_dy + margin.bottom / 2) + ")")
-               .call(axis_x);
-
-            svg.append("g")
-               .attr("id", "axis_y")
-               .attr("transform", "translate(" + (margin.left / 2) + ", 0)")
-               .call(axis_y);
-
-            d3.select("#axis_x")
-              .append("text")
-              .attr("transform", "translate(360, 20)")
-              .text("PC 0");
-
-            d3.select("#axis_y")
-              .append("text")
-              .attr("transform", "rotate(-90) translate(-20, 15)")
-              .text("PC 1");
-
-            var color = d3.scaleOrdinal(d3.schemeCategory10);
-
-            var circles = svg.append("g")
-                             .selectAll("circle")
-                             .data(d)
-                             .enter()
-                             .append("circle")
-                             .attr("r", 3)
-                             .attr("cx", (d) => x(+d.pca0))
-                             .attr("cy", (d) => y(+d.pca1))
-                             .attr("class", "non_brushed")
-                             .attr("id",(d) => "p"+d.sofifa_id)
-                             .style("fill", (d) => { return color(d.cluster) });
-
-            var table = d3.select('#table').append('table')
-                .attr("class","table");
-
-            function highlightBrushedCircles() {
-
-                if (d3.event.selection != null) {
-
-                    // revert circles to initial style
-                    circles.attr("class", "non_brushed");
-
-                    var brush_coords = d3.brushSelection(this);
-
-                    // style brushed circles
-                    circles.filter(function (){
-
-                               var cx = d3.select(this).attr("cx"),
-                                   cy = d3.select(this).attr("cy");
-
-                               return isBrushed(brush_coords, cx, cy);
-                           })
-                           .attr("class", "brushed");
-                }
-            }
-
-            function displayTable() {
-
-                // disregard brushes w/o selections  
-                // ref: http://bl.ocks.org/mbostock/6232537
-                if (!d3.event.selection) return;
-
-                // programmed clearing of brush after mouse-up
-                // ref: https://github.com/d3/d3-brush/issues/10
-                d3.select(this).call(brush.move, null);
-
-                var d_brushed =  d3.selectAll(".brushed").data();
-
-                // populate table if one or more elements is brushed
-                if (d_brushed.length > 0) {
-                    clearTableRows();
-                    clearParCor ()
-                    drawParCor(d_brushed)
-                    d_brushed.forEach(d_row => populateTableRow(d_row))
-                } else {
-                    clearParCor ()
-                    clearTableRows();
-                }
-            }
-
-            var brush = d3.brush()
-                          .on("brush", highlightBrushedCircles)
-                          .on("end", displayTable); 
-
-            svg.append("g")
-               .call(brush);
-        });
-
-        function clearTableRows() {
-
-            hideTableColNames();
-            d3.selectAll(".row_data").remove();
-        }
-
-        function isBrushed(brush_coords, cx, cy) {
-
-             var x0 = brush_coords[0][0],
-                 x1 = brush_coords[1][0],
-                 y0 = brush_coords[0][1],
-                 y1 = brush_coords[1][1];
-
-            return x0 <= cx && cx <= x1 && y0 <= cy && cy <= y1;
-        }
-
-        function hideTableColNames() {
-            d3.select("table").style("visibility", "hidden");
-        }
-
-        function showTableColNames() {
-            d3.select("#card").style("visibility", "hidden")
-            clearAllRadarCharts();
-            d3.select("#table").style("visibility", "hidden")
-            d3.select("table").style("visibility", "visible");
-        }
-
-        function clearAllRadarCharts() {
-            d3.select("#chart0").selectAll("*").remove();
-            d3.select("#chart1").selectAll("*").remove();
-            d3.select("#chart2").selectAll("*").remove();
-        }
-
-        function refreshRadarCharts(d){
-            if(d.team_position =="GK"){
-                RadarChart.draw("#chart0", d, mycfg, "keeper");
-            }else{
-                RadarChart.draw("#chart0", d, mycfg, "attack");
-            }
-            RadarChart.draw("#chart1", d, mycfg, "defense");
-            RadarChart.draw("#chart2", d, mycfg, "physical");
-
-        }
-
-        function playerCard(d_row){
-            clearTableRows()
-            hideParCor ()
-            clearAllRadarCharts()
-            refreshRadarCharts(d_row)
-
-            d3.selectAll("circle")
-                .attr("class","non_brushed")
-            d3.select("#p"+d_row.sofifa_id)
-                .attr("class","brushed")
-            d3.select("#table")
-              .select("img")
-              .attr("src","https://futhead.cursecdn.com/static/img/20/players/"+d_row.sofifa_id+".png")
-              .style("float","middle")
-
-            d3.select("#card")
-              .select(".card-body")
-              .append("ul")
-              .attr("class","list-group")
-
-            d3.select("#card").style("visibility", "visible")
-            d3.select("#card")
-              .select("ul")
-              .selectAll("li").remove()
-            d3.select("#card")
-              .select("ul")
-              .append("li")
-              .text("Name: "+d_row.short_name)
-              .attr("class","list-group-item")
-            d3.select("#card")
-              .select("ul")
-              .append("li")
-              .text("Position: "+d_row.team_position)
-              .attr("class","list-group-item")
-            d3.select("#card")
-              .select("ul")
-              .append("li")
-              .text("Club: "+d_row.club)
-              .attr("class","list-group-item")
-            d3.select("#card")
-              .select("ul")
-              .append("li")
-              .text("Nationality: "+d_row.nationality)
-              .attr("class","list-group-item")
-            d3.select("#card")
-              .select("ul")
-              .append("li")
-              .text("Overall: "+d_row.overall)
-              .attr("class","list-group-item")
-            d3.select("#card")
-              .select("ul")
-              .append("li")
-              .text("Potential: "+d_row.potential)
-              .attr("class","list-group-item")
-            d3.select("#card")
-              .select("ul")
-              .append("li")
-              .text("Age: "+d_row.age)
-              .attr("class","list-group-item")
-            d3.select("#card")
-              .select("ul")
-              .append("li")
-              .text("Height: "+d_row.height_cm+"cm")
-              .attr("class","list-group-item")
-            d3.select("#card")
-              .select("ul")
-              .append("li")
-              .text("Weight: "+d_row.weight_kg+"kg")
-              .attr("class","list-group-item")
-
-
-
-        }
-
-
-        function populateTableRow(d_row) {
-            showTableColNames();
-            var d_row_filter = [d_row.team_position,
-                                d_row.short_name,
-                                d_row.club,
-                                d_row.overall,
-                                formatIncome(d_row.value_eur)
-                                ];
-
-            d3.select("#table").select("table")
-              .append("tr")
-              .on("click", function(d) { playerCard(d_row) })
-              .on("mouseover", function(d) { highlight(d_row) })
-              .on("mouseout", function (d) { unhighlight() })
-              .attr("class", "row_data")
-              .selectAll("td")
-              .data(d_row_filter)
-
-              .enter()
-              .append("td")
-              .attr("align", (d, i) => i < 2 ? "left" : "right")
-              .text(d => d)
-        }
-
+//Call function to draw the Radar chart
+//Will expect that data is in %'s
+RadarChart.draw("#chart0", d, mycfg, "attack");
+RadarChart.draw("#chart1", d, mycfg, "defense");
+RadarChart.draw("#chart2", d, mycfg, "physical");
 
 
     </script>
