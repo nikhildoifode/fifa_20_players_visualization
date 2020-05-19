@@ -74,6 +74,22 @@ class utilityFunctions(object):
 
         return resultData
 
+
+    def getDataFromNew(self):
+        dataframe = pd.read_csv("newPlayers.csv")
+        pcaData = []
+        for _, row in dataframe.iterrows():
+            rowdata = {}
+            rowdata['sofifaid'] = int(row['sofifa_id'])
+            rowdata['playername'] = row['short_name']
+            rowdata['xvalue'] = float(row['pca0'])
+            rowdata['yvalue'] = float(row['pca1'])
+            rowdata['cluster'] = int(row['cluster'])
+            pcaData.append(rowdata)
+
+        return pcaData
+
+
 # ut = utilityFunctions()
 # data = ut.readCSV()
 # modifiedData = ut.cleanData(data)

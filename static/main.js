@@ -1,3 +1,4 @@
+/*
 var margin = {top: 0, right: 0, bottom: 0, left: 0},
 width = 842 - margin.left - margin.right,
 height = 405 - margin.top - margin.bottom;
@@ -257,6 +258,121 @@ function createGraph(data) {
     .text((d) => { return "Cluster " + d + " -" })
 
 }
+
 function generateSpiderChart() {
 
+}
+
+var cfg = {
+    w: 150,
+    h: 150,
+    ExtraWidthX: 50,
+    ExtraWidthY: 50,
+    TranslateX: 50,
+    TranslateY: 25
+}
+
+function clearAllHistoCharts() {
+    d3.select("#chart0").selectAll("svg").remove();
+    d3.select("#chart1").selectAll("svg").remove();
+    d3.select("#chart2").selectAll("svg").remove();
+}
+
+function drawHistogram (data, xField, id) {
+    var xScaleNew = d3.scaleLinear()
+    .range([0, cfg.w])
+
+    var yScale = d3.scaleLinear()
+    .range ([cfg.h, 0]);
+
+    var svg = d3.selectAll(id)
+    .append("svg")
+    .attr("width", cfg.w + cfg.ExtraWidthX)
+    .attr("height", cfg.h + cfg.ExtraWidthY);
+
+    var graph = svg.append("g")
+    .attr("transform", "translate(" + cfg.TranslateX + "," + cfg.TranslateY + ")");
+
+    var xAxis = graph.append("g")
+    var yAxis = graph.append("g")
+
+    let range = d3.extent(data, function(d) { return parseInt(d[xField]); })
+    xScaleNew.domain([range[0], Math.ceil((range[1] + 1) / 10) * 10])
+
+    var histogram = d3.histogram()
+    .value(function(d) { return d[xField]; })
+    .domain(xScaleNew.domain())
+    .thresholds(xScaleNew.ticks(5));
+
+    var bins = histogram(data);
+
+    xAxis.attr("transform", "translate(0," + cfg.h + ")")
+    .call(d3.axisBottom(xScaleNew).tickFormat( function(d){ return d; }).ticks(bins.length));
+
+    yScale.domain([0, d3.max(bins, function(d) { return d.length; })]);
+    yAxis.call(d3.axisLeft(yScale));
+
+    svg.selectAll("rect")
+    .data(bins)
+    .enter()
+    .append("rect")
+    .attr("class", "bar")
+    .attr("x", cfg.TranslateX)
+    .attr("y", cfg.TranslateY)
+    .attr("transform", function(d) {return "translate(" + xScaleNew(d.x0) + "," + yScale(d.length) + ")"; })
+    .attr("width", function(d) { return xScaleNew(d.x1) - xScaleNew(d.x0); })
+    .attr("height", function(d) { return cfg.h - yScale(d.length); })
+    .style("fill", "steelblue")
+}
+
+function drawHistoCharts (data) {
+    drawHistogram (data, 'age', '#chart0')
+    drawHistogram (data, 'wage_eur', '#chart1')
+    drawHistogram (data, 'potential', '#chart2')
+}
+*/
+
+var pc2
+
+function clearParCor () {
+    d3.select("#example").style("display", "block")
+    d3.select("#example").selectAll("*").remove();
+}
+
+function drawParCor (data) {
+    for (let i = data.length - 1; i >= 0; i--)
+        if (data[i] === undefined) data.splice(i,1)
+        else break
+
+    pc2 = ParCoords()("#example")
+
+    pc2.data(data)
+    .bundlingStrength(0.6)
+    .smoothness(0.125)
+    .color('#069')
+    .alpha(0.4)
+    .composite('darken')
+    .dimensions(['league' ,'age', 'overall', 'potential', 'wage_eur', 'value_eur', 'playerType', 'height_cm', 'weight_kg'])
+    .margin({ top: 25, left: 130, bottom: 10, right: 20 })
+    .render()
+    .brushMode("1D-axes")
+    .reorderable()
+    .interactive()
+
+    pc2.on("brush", function (d) {
+        clearTableRows();
+        d.forEach(d_row => populateTableRow(d_row))
+    })
+}
+
+function highlight(d) {
+    pc2.highlight([d])
+}
+
+function unhighlight() {
+    pc2.unhighlight()
+}
+
+function hideParCor () {
+    d3.select("#example").style("display", "none")
 }

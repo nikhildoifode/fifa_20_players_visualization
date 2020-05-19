@@ -36,6 +36,7 @@
     <head>
         <script src="http://d3js.org/d3.v4.min.js"></script>
         <script src="./static/RadarChart.js"></script>
+        <script src="./static/parcoords.standalone.js"></script>
         <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.0.0-beta1/jquery.min.js"></script> -->
         <!-- <script src="https://code.jquery.com/ui/1.11.3/jquery-ui.min.js"></script> -->
 
@@ -84,12 +85,12 @@
                     </div>
                 </div>
 
-
                 <div class="w-100" style="margin-top:10px;"></div>
+                
+                <div id="example" class="parcoords" style="width:1000px;height:220px"></div>
                 <div class="col" id="chart0" style="margin-top:35px"></div>
                 <div class="col" id="chart1" style="margin-top:35px"></div>
                 <div class="col" id="chart2" style="margin-top:35px"></div>
-
             </div>
         </div>
         <!-- <button class="button" onclick="generateParallelCo()"> Display Parallel Coordinates</button> -->
@@ -132,11 +133,11 @@
         clearAllRadarCharts()
         d3.select("#table").style("visibility", "hidden")
 
-        d3.csv("/static/players_20.csv", d => {
+        d3.csv("/static/newPlayers.csv", d => {
             var n = d.length;
 
-            var d_extent_x = d3.extent(d, d => +d.overall),
-                d_extent_y = d3.extent(d, d => +d.value_eur);
+            var d_extent_x = d3.extent(d, d => +d.pca0),
+                d_extent_y = d3.extent(d, d => +d.pca1);
 
             x.domain(d_extent_x);
             y.domain(d_extent_y);
@@ -157,23 +158,26 @@
             d3.select("#axis_x")
               .append("text")
               .attr("transform", "translate(360, 20)")
-              .text("Overall rating");
+              .text("PC 0");
 
             d3.select("#axis_y")
               .append("text")
               .attr("transform", "rotate(-90) translate(-20, 15)")
-              .text("Transfer value");
+              .text("PC 1");
+
+            var color = d3.scaleOrdinal(d3.schemeCategory10);
 
             var circles = svg.append("g")
                              .selectAll("circle")
                              .data(d)
                              .enter()
                              .append("circle")
-                             .attr("r", 5)
-                             .attr("cx", (d) => x(+d.overall))
-                             .attr("cy", (d) => y(+d.value_eur))
+                             .attr("r", 3)
+                             .attr("cx", (d) => x(+d.pca0))
+                             .attr("cy", (d) => y(+d.pca1))
                              .attr("class", "non_brushed")
-                             .attr("id",(d) => "p"+d.sofifa_id);
+                             .attr("id",(d) => "p"+d.sofifa_id)
+                             .style("fill", (d) => { return color(d.cluster) });
 
             var table = d3.select('#table').append('table')
                 .attr("class","table");
@@ -214,8 +218,11 @@
                 // populate table if one or more elements is brushed
                 if (d_brushed.length > 0) {
                     clearTableRows();
+                    clearParCor ()
+                    drawParCor(d_brushed)
                     d_brushed.forEach(d_row => populateTableRow(d_row))
                 } else {
+                    clearParCor ()
                     clearTableRows();
                 }
             }
@@ -274,7 +281,7 @@
 
         function playerCard(d_row){
             clearTableRows()
-
+            hideParCor ()
             clearAllRadarCharts()
             refreshRadarCharts(d_row)
 
@@ -358,9 +365,9 @@
 
             d3.select("#table").select("table")
               .append("tr")
-              .on("click", function(d){
-                    console.log(d_row)
-                    playerCard(d_row)})
+              .on("click", function(d) { playerCard(d_row) })
+              .on("mouseover", function(d) { highlight(d_row) })
+              .on("mouseout", function (d) { unhighlight() })
               .attr("class", "row_data")
               .selectAll("td")
               .data(d_row_filter)
