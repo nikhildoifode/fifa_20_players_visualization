@@ -19,3 +19,5 @@ python3 app.py
 https://sofifa.com/  
 https://www.kaggle.com/stefanoleone992/fifa-20-complete-player-dataset/  
 https://www.w3schools.com/bootstrap4/  
+https://github.com/BigFatDog/parcoords-es  
+https://d3js.org  

@@ -33,9 +33,9 @@ def index():
 
 if __name__ == "__main__":
 
-    global resultData
+    # global resultData
     df = pd.read_csv("newPlayers.csv")
-    obj = utilityFunctions()
-    resultData = obj.setData()
+    # obj = utilityFunctions()
+    # resultData = obj.setData()
 
     app.run(debug = True)
