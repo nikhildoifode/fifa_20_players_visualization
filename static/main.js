@@ -1,283 +1,395 @@
-var margin = {top: 30, right: 10, bottom: 10, left: 10},
-width = 960 - margin.left - margin.right,
-height = 500 - margin.top - margin.bottom;
+
 
 var SCRIPT_ROOT = window.location.href
 
-function generateViz() {
-    $.getJSON(SCRIPT_ROOT + '/displayVisualization',
-    (d) => {
-        createGraph(d.data)
-    })
-}
 
-function generateParallelCo() {
-    d3.select("#viz").html('')
-    d3.select("#example").html('')
-    var data2 = [
-        [0,-0,0,0,0,3],
-        [1,-1,1,2,1,6],
-        [2,-2,4,4,0.5,2],
-        [3,-3,9,6,0.33,4],
-        [4,-4,16,8,0.25,9]
-    ]
-    // d3.csv('./static/temp.csv', function(data) {
-        var pc2 = ParCoords()("#example");
-        pc2.data(data2)
-        .bundlingStrength(0.5)
-        .smoothness(0.2)
-        .color('#069')
-        .alpha(0.2)
-        .composite('darken')
-        .margin({ top: 50, left: 10, bottom: 20, right: 10 })
-        .render()
-        .brushMode("1D-axes")
-        .reorderable()
-        .interactive()
-    // })
+var margin = {top: 10, right: 0, bottom: 20, left: 10},
+    svg_dx = 800, 
+    svg_dy = 380,
+    plot_dx = svg_dx - margin.right - margin.left,
+    plot_dy = svg_dy - margin.top - margin.bottom;
 
-    // pc2.highlight([data2[0]])
+var x = d3.scaleLinear().range([margin.left, plot_dx]),
+    y = d3.scaleLinear().range([plot_dy, margin.top]);
 
-    // var x = d3.scalePoint().range([0, width], 1),
-    // y = {},
-    // dragging = {};
+var formatIncome = d3.format("$,");
 
-    // var line = d3.line(),
-    // axis = d3.axisLeft(),
-    // background,
-    // foreground;
-
-    // var svg = d3.select(".viz").append("svg")
-    // .attr("width", width + margin.left + margin.right)
-    // .attr("height", height + margin.top + margin.bottom)
-    // .append("g")
-    // .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
-    // d3.csv("./static/temp.csv"). then((cars) => {
-    //     // Extract the list of dimensions and create a scale for each.
-    //     x.domain(dimensions = d3.keys(cars[0]).filter(function(d) {
-    //         y[d] = d3.scaleLinear()
-    //         .domain(d3.extent(cars, function(p) { return +p[d]; }))
-    //         .range([height, 0])
-    //         return true
-    //     }));
-
-    //     // Add grey background lines for context.
-    //     background = svg.append("g")
-    //     .attr("class", "background")
-    //     .selectAll("path")
-    //     .data(cars)
-    //     .enter()
-    //     .append("path")
-    //     .attr("d", path);
-
-    //     // Add blue foreground lines for focus.
-    //     foreground = svg.append("g")
-    //     .attr("class", "foreground")
-    //     .selectAll("path")
-    //     .data(cars)
-    //     .enter().append("path")
-    //     .attr("d", path);
-
-    //     // Add a group element for each dimension.
-    //     var g = svg.selectAll(".dimension")
-    //     .data(dimensions)
-    //     .enter().append("g")
-    //     .attr("class", "dimension")
-    //     .attr("transform", function(d) { return "translate(" + x(d) + ")"; })
-    //     .call(d3.drag()
-    //         .subject(function(d) { return {x: x(d)}; })
-    //         .on("start", function(d) {
-    //             dragging[d] = x(d);
-    //             background.attr("visibility", "hidden");
-    //         })
-    //         .on("drag", function(d) {
-    //             dragging[d] = Math.min(width, Math.max(0, d3.event.x));
-    //             foreground.attr("d", path);
-    //             dimensions.sort(function(a, b) { return position(a) - position(b); });
-    //             x.domain(dimensions);
-    //             g.attr("transform", function(d) { return "translate(" + position(d) + ")"; })
-    //         })
-    //         .on("end", function(d) {
-    //             delete dragging[d];
-    //             transition(d3.select(this)).attr("transform", "translate(" + x(d) + ")");
-    //             transition(foreground).attr("d", path);
-    //             background.attr("d", path)
-    //             .transition()
-    //             .delay(500)
-    //             .duration(0)
-    //             .attr("visibility", null);
-    //         }));
-
-    //     // Add an axis and title.
-    //     g.append("g")
-    //     .attr("class", "axis")
-    //     .each(function(d) { d3.select(this).call(axis.scale(y[d])); })
-    //     .append("text")
-    //     .style("text-anchor", "middle")
-    //     .attr("y", -9)
-    //     .text(function(d) { return d; });
-
-    //     // Add and store a brush for each axis.
-    //     // g.append("g")
-    //     // .attr("class", "brush")
-    //     // .each(function(d) {
-    //     //     d3.select(this)
-    //     //     .call(
-    //     //         y[d].brush = d3.brushY(y[d])
-    //     //         .on("start", brushstart)
-    //     //         .on("brush", brush)
-    //     //     );
-    //     // })
-    //     // .selectAll("rect")
-    //     // .attr("x", -8)
-    //     // .attr("width", 16)
-    // });
-
-    // function position(d) {
-    //     var v = dragging[d];
-    //     return v == null ? x(d) : v;
-    // }
-
-    // function transition(g) {
-    //     return g.transition().duration(500);
-    // }
-
-    // // Returns the path for a given data point.
-    // function path(d) {
-    //     return line(dimensions.map(function(p) { return [position(p), y[p](d[p])]; }));
-    // }
-
-    // function brushstart() {
-    //     d3.event.sourceEvent.stopPropagation();
-    // }
-
-    // // Handles a brush event, toggling the display of foreground lines.
-    // function brush() {
-    //     var actives = dimensions.filter(function(p) { return !y[p].brush.empty(); }),
-    //     extents = actives.map(function(p) { return y[p].brush.extent(); });
-    //     foreground.style("display", function(d) {
-    //         return actives.every(function(p, i) {
-    //             return extents[i][0] <= d[p] && d[p] <= extents[i][1];
-    //         }) ? null : "none";
-    //     });
-    // }
-}
+var svg = d3.select("#chart")
+            .append("svg")
+            .attr("width", svg_dx)
+            .attr("height", svg_dy);
 
 
-function createGraph(data) {
-    d3.select("#viz").html('')
-    d3.select("#example").html('')
 
-    // setup graph
-    var svg = d3.select("#viz")
-    .append("svg")
-    .attr("width", width + margin.left + margin.right)
-    .attr("height", height + margin.top + margin.bottom + 20)
-    .style('margin-left', '13%')
-    .style('padding', '1px 70px')
-    .append("g")
-    .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
+d3.csv("/static/newPlayers.csv", d => {
+    var n = d.length;
+
+    var d_extent_x = d3.extent(d, d => +d.pca0),
+        d_extent_y = d3.extent(d, d => +d.pca1);
+
+    x.domain(d_extent_x);
+    y.domain(d_extent_y);
+
+    var axis_x = d3.axisBottom(x),
+        axis_y = d3.axisLeft(y);
 
     var color = d3.scaleOrdinal(d3.schemeCategory10);
 
-	// add the tooltip area to the webpage
-	var tooltip = d3.select("body").append("div")
-    .attr("class", "tooltip")
-    .style("opacity", 0);
 
-    data.forEach((d) => {
-        d.xvalue = +d.xvalue
-        d.yvalue = +d.yvalue
-    })
+    var circles = svg.append("g")
+                     .selectAll("circle")
+                     .data(d)
+                     .enter()
+                     .append("circle")
+                     .attr("r", 4)
+                     .attr("cx", (d) => x(+d.pca0))
+                     .attr("cy", (d) => y(+d.pca1))
+                     .attr("class", "non_brushed")
+                     .attr("id",(d) => "p"+d.sofifa_id)
+                     .style("fill", (d) => { return color(d.cluster) });
 
-    // x-axis
-    var xValue = (d) => { return d.xvalue },
-    xScale = d3.scaleLinear().range([0, width]),
-    xMap = (d) => { return xScale(xValue(d)) },
-    xAxis = d3.axisBottom().scale(xScale)
 
-    xScale.domain([d3.min(data, xValue) - 1, d3.max(data, xValue) + 1])
+      svg.append("text")
+        .attr("x", 800-250)
+        .attr("y", 10)
+        .attr("text-anchor", "left")
+        .style("font-size", "11px")
+        .style("text-decoration", "underline")
+        .text("Brush over players to load their details in the table");
+
+    var table = d3.select('#table').append('table')
+        .attr("class","table");
+
+    function highlightBrushedCircles() {
+
+        if (d3.event.selection != null) {
+
+            // revert circles to initial style
+            circles.attr("class", "non_brushed");
+
+            var brush_coords = d3.brushSelection(this);
+
+            // style brushed circles
+            circles.filter(function (){
+
+                       var cx = d3.select(this).attr("cx"),
+                           cy = d3.select(this).attr("cy");
+
+                       return isBrushed(brush_coords, cx, cy);
+                   })
+                   .attr("class", "brushed");
+        }
+    }
+
+    function displayTable() {
+
+        // disregard brushes w/o selections  
+        // ref: http://bl.ocks.org/mbostock/6232537
+        if (!d3.event.selection) return;
+
+        // programmed clearing of brush after mouse-up
+        // ref: https://github.com/d3/d3-brush/issues/10
+        d3.select(this).call(brush.move, null);
+
+        var d_brushed =  d3.selectAll(".brushed").data();
+
+        // populate table if one or more elements is brushed
+        if (d_brushed.length > 0) {
+            clearTableRows();
+            clearParCor ()
+            drawParCor(d_brushed)
+            d_brushed.forEach(d_row => populateTableRow(d_row))
+        } else {
+            clearParCor ()
+            clearTableRows();
+        }
+    }
+
+    var brush = d3.brush()
+                  .on("brush", highlightBrushedCircles)
+                  .on("end", displayTable); 
 
     svg.append("g")
-    .attr("class", "x axis")
-    .attr("transform", "translate(0," + height + ")")
-    .call(xAxis)
-    .append("text")
-    .attr("class", "label")
-    .attr("x", width)
-    .attr("y", -6)
-    .style("text-anchor", "end")
-    .attr("dy", "3.00em")
-    .attr("dx", "-30.00em")
-    .text("PC 1")
+       .call(brush);
+});
 
-    // y-axis
-    var yValue = (d) => { return d.yvalue },
-    yScale = d3.scaleLinear().range([height, 0]),
-    yMap = (d) => { return yScale(yValue(d)) },
-    yAxis = d3.axisLeft().scale(yScale)
+function clearTableRows() {
 
-    yScale.domain([d3.min(data, yValue) - 1, d3.max(data, yValue) + 1])
-
-    svg.append("g")
-    .attr("class", "y axis")
-    .call(yAxis)
-    .append("text")
-    .attr("class", "label")
-    .attr("transform", "rotate(-90)")
-    .attr("y", 6)
-    .attr("dy", "-3.0em")
-    .attr("dx", "-12.00em")
-    .style("text-anchor", "end")
-    .text("PC 2")
-
-    var graphtitle = 'PCA Plot'
-
-    // draw legend
-    svg.append("text")
-    .attr("x", (width / 2))
-    .attr("y", 0 - (margin.top / 2))
-    .attr("text-anchor", "middle")
-    .style("font-size", "20px")
-    .text(graphtitle)
-
-    // main graph
-    svg.selectAll(".dot")
-    .data(data)
-    .enter().append("circle")
-    .attr("class", "dot")
-    .attr("r", 2)
-    .attr("cx", xMap)
-    .attr("cy", yMap)
-    .style("fill", (d) => { return color(d.cluster) })
-    .on("mouseover", function(d) {
-        tooltip.transition().duration(200).style("opacity", .9);
-        tooltip.html(d.playername).style("background-color",'#4CAF50')
-        .style("left", (d3.event.pageX + 15) + "px")
-        .style("top", (d3.event.pageY - 28) + "px");
-    })
-    .on("mouseout", function(d) {
-        tooltip.transition().duration(500).style("opacity", 0);
-    });
-
-    // draw legend
-    var legend = svg.selectAll(".legend")
-    .data(color.domain())
-    .enter().append("g")
-    .attr("class", "legend")
-    .attr("transform", (_, i) => { return "translate(0," + i * 20 + ")" })
-
-    legend.append("rect")
-    .attr("x", width - 18)
-    .attr("width", 10)
-    .attr("height", 10)
-    .style("fill", color)
-
-    legend.append("text")
-    .attr("x", width - 24)
-    .attr("y", 5)
-    .attr("dy", ".35em")
-    .style("text-anchor", "end")
-    .text((d) => { return "Cluster " + d + " -" })
+    hideTableColNames();
+    d3.selectAll(".row_data").remove();
 }
+
+
+
+var cfg = {
+    w: 150,
+    h: 150,
+    ExtraWidthX: 50,
+    ExtraWidthY: 50,
+    TranslateX: 50,
+    TranslateY: 25
+}
+
+function isBrushed(brush_coords, cx, cy) {
+
+     var x0 = brush_coords[0][0],
+         x1 = brush_coords[1][0],
+         y0 = brush_coords[0][1],
+         y1 = brush_coords[1][1];
+
+    return x0 <= cx && cx <= x1 && y0 <= cy && cy <= y1;
+}
+
+function hideTableColNames() {
+    d3.select("table").style("visibility", "hidden");
+}
+
+function showTableColNames() {
+    d3.select("#card").style("visibility", "hidden")
+    clearAllRadarCharts();
+    d3.select("#table").style("visibility", "hidden")
+    d3.select("table").style("visibility", "visible");
+}
+
+function clearAllRadarCharts() {
+    d3.select("#chart0").selectAll("*").remove();
+    d3.select("#chart1").selectAll("*").remove();
+    d3.select("#chart2").selectAll("*").remove();
+    d3.select("#chart3").selectAll("*").remove();
+}
+
+function refreshRadarCharts(d){
+    if(d.team_position =="GK"){
+        RadarChart.draw("#chart0", d, mycfg, "keeper");
+    }else{
+        RadarChart.draw("#chart0", d, mycfg, "attack");
+    }
+    RadarChart.draw("#chart1", d, mycfg, "defense");
+    RadarChart.draw("#chart2", d, mycfg, "physical");
+    drawLineChart(ds,d.value_eur, "Transfer Value Percentile")
+    drawLineChart(ds1,d.wage_eur, "Player Wage Percentile")
+
+}
+
+function playerCard(d_row){
+    clearTableRows()
+    hideParCor ()
+    clearAllRadarCharts()
+    refreshRadarCharts(d_row)
+
+    d3.selectAll("circle")
+        .attr("class","non_brushed")
+    d3.select("#p"+d_row.sofifa_id)
+        .attr("class","brushed")
+        .style("position","relative")
+        .style("z-index","-1")
+
+    d3.select("#table")
+      .select("img")
+      .attr("src","https://futhead.cursecdn.com/static/img/20/players/"+d_row.sofifa_id+".png")
+      .style("float","middle")
+
+    d3.select("#card")
+      .select(".card-body")
+      .append("ul")
+      .attr("class","list-group")
+
+    d3.select("#card").style("visibility", "visible")
+    d3.select("#card")
+      .select("ul")
+      .selectAll("li").remove()
+    d3.select("#card")
+      .select("ul")
+      .append("li")
+      .text("Name: "+d_row.short_name)
+      .attr("class","list-group-item")
+    d3.select("#card")
+      .select("ul")
+      .append("li")
+      .text("Position: "+d_row.team_position)
+      .attr("class","list-group-item")
+    d3.select("#card")
+      .select("ul")
+      .append("li")
+      .text("Club: "+d_row.club)
+      .attr("class","list-group-item")
+    d3.select("#card")
+      .select("ul")
+      .append("li")
+      .text("Nationality: "+d_row.nationality)
+      .attr("class","list-group-item")
+    d3.select("#card")
+      .select("ul")
+      .append("li")
+      .text("Overall: "+d_row.overall)
+      .attr("class","list-group-item")
+    d3.select("#card")
+      .select("ul")
+      .append("li")
+      .text("Potential: "+d_row.potential)
+      .attr("class","list-group-item")
+    d3.select("#card")
+      .select("ul")
+      .append("li")
+      .text("Age: "+d_row.age)
+      .attr("class","list-group-item")
+    d3.select("#card")
+      .select("ul")
+      .append("li")
+      .text("Height: "+d_row.height_cm+"cm")
+      .attr("class","list-group-item")
+    d3.select("#card")
+      .select("ul")
+      .append("li")
+      .text("Weight: "+d_row.weight_kg+"kg")
+      .attr("class","list-group-item")
+
+
+
+}
+
+function populateTableRow(d_row) {
+    showTableColNames();
+    var d_row_filter = [d_row.team_position,
+                        d_row.short_name,
+                        d_row.club,
+                        d_row.overall,
+                        formatIncome(d_row.value_eur)
+                        ];
+
+    d3.select("#table").select("table")
+      .append("tr")
+      .on("click", function(d){playerCard(d_row)})
+      .on("mouseover", function(d) { highlight(d_row) })
+      .on("mouseout", function (d) { unhighlight() })
+      .attr("class", "row_data")
+      .selectAll("td")
+      .data(d_row_filter)
+
+      .enter()
+      .append("td")
+      .attr("align", (d, i) => i < 2 ? "left" : "right")
+      .text(d => d)
+}
+
+function drawLineChart(data, mark_value, title) {
+
+var margin = {top: 0, right: 10, bottom: 20, left: 25},
+    width = 300,
+    height = 90;
+
+// append the svg object to the body of the page
+var svg1 = d3.select("#chart3")
+  .append("svg")
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom)
+  .append("g")
+    .attr("transform",
+          "translate(" + margin.left + "," + margin.top + ")");
+
+formatValue = d3.format(".2s");
+
+var x = d3.scaleLinear().range([0, width]);
+var y = d3.scaleLinear().range([height, 0]);
+
+// define the line
+var valueline = d3.line()
+    .x(function(d) { return x(d.value); })
+    .y(function(d) { return y(d.count); });
+
+
+  // format the data
+  data.forEach(function(d) {
+
+      d.value = +d.value;
+      d.count = +d.count;
+  });
+  
+  // sort years ascending
+  data.sort(function(a, b){
+    return a["value"]-b["value"];
+    })
+ 
+  // Scale the range of the data
+  x.domain(d3.extent(data, function(d) { return d.value; }));
+  y.domain([0, d3.max(data, function(d) {
+      return d.count; })]);
+  
+  // Add the valueline path.
+  svg1.append("path")
+      .data([data])
+      .attr("class", "line")
+      .attr("d", valueline);
+
+  // Add the X Axis
+  svg1.append("g")
+      .attr("transform", "translate(0," + height + ")")
+      .call(d3.axisBottom(x).tickFormat(function(d) { return formatValue(d)}));
+
+  // Add the Y Axis
+  svg1.append("g")
+      .call(d3.axisLeft(y).ticks(4));
+  
+      svg1.append('line')
+      .attr('x1', x(mark_value))
+      .attr('y1', 95)
+      .attr('x2', x(mark_value))
+      .attr('y2', 10 )
+      .style("stroke-width", 1)
+      .style("stroke", "red")
+      .style("fill", "none");
+
+      svg1.append("text")
+        .attr("x", (width / 2)+40)
+        .attr("y", 25)
+        .attr("text-anchor", "right")
+        .style("font-size", "10px")
+        .text(title);
+  }
+
+var pc2
+
+function clearParCor () {
+    d3.select("#example").style("display", "block")
+    d3.select("#example").selectAll("*").remove();
+}
+
+function drawParCor (data) {
+    for (let i = data.length - 1; i >= 0; i--)
+        if (data[i] === undefined) data.splice(i,1)
+        else break
+
+    pc2 = ParCoords()("#example")
+
+    pc2.data(data)
+    .bundlingStrength(0.6)
+    .smoothness(0.05)
+    .color('#069')
+    .alpha(0.4)
+    .composite('darken')
+    .dimensions(['league', 'playerType', 'age', 'overall', 'potential', 'wage_eur', 'value_eur', 'height_cm', 'weight_kg'])
+    .margin({ top: 25, left: 130, bottom: 10, right: 20 })
+    .height(300)
+    .render()
+    .brushMode("1D-axes")
+    .reorderable()
+    .interactive()
+
+    pc2.on("brush", function (d) {
+        clearTableRows();
+        d.forEach(d_row => populateTableRow(d_row))
+    })
+}
+
+function highlight(d) {
+    pc2.highlight([d])
+}
+
+function unhighlight() {
+    pc2.unhighlight()
+}
+
+function hideParCor () {
+    d3.select("#example").style("display", "none")
+}
+

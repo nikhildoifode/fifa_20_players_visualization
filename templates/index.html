@@ -1,42 +1,151 @@
 <!DOCTYPE HTML>
 <meta charset="utf-8">
 <html>
-	<head>
-		<link rel="stylesheet" href="./static/style.css">
-		<script src="http://d3js.org/d3.v4.min.js"></script>
+    <style>
 
-		<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.0.0-beta1/jquery.min.js"></script> -->
-		<!-- <script src="https://code.jquery.com/ui/1.11.3/jquery-ui.min.js"></script> -->
+        text {
+            font-family: sans-serif;
+            fill: #000000;
+        }
 
-		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
-		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
-		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
-		<script src="./static/parcoords.standalone.js"></script>
-		<title> Visualization Project </title>
-	</head>
-	<body>
-		<!-- <div class="container-fluid">
-			<div class="row">
-				<div class="col-sm-5"> <h3>FIFA 20 Players Data Visualization</h3> </div>
-				<div class="col-sm-7">.col-sm-7</div>
-			</div>
+        table {
+            visibility: hidden;
+            position: absolute;
+            left: 0px;
+            font-family: sans-serif;
+            font-size: 0.7em;
+            display: block;
+            overflow:auto;
+            height: 381px;
+            width: 95%;
+        }
 
-			<div class="row mainRow">
-				<div class="col-sm-6" style="border: ridge;">1 of 2</div>
-				<div id="2of2" class="col-sm-6" style="border: ridge;">2 of 2</div>
-			</div>
+        .brushed {
+            fill: #E32636;
+            stroke: #8e1b54;
+            opacity: 1.0;
+        }
 
-			<div class="row secondRow">
-				<div class="col-sm-4" style="border: ridge;">1 of 3</div>
-				<div class="col-sm-4" style="border: ridge;">2 of 3</div>
-				<div class="col-sm-4" style="border: ridge;">4 of 3</div>
-			</div>
-		</div> -->
-		<button class="button" onclick="generateParallelCo()"> Display Parallel Coordinates</button>
-		<button class="button" onclick="generateViz()"> Display Viz</button>
-		<div id="viz"></div>
-		<div id="example" class="parcoords" style="width:750px;height:450px"></div>
-		<script src="./static/main.js"></script>
-	</body>
+        .non_brushed {
+            fill: #5FA6ED;
+            opacity: 0.7;
+        }
+
+.line {
+  fill: none;
+  stroke: steelblue;
+  stroke-width: 2px;
+}
+
+
+    </style>
+    <head>
+        <script src="http://d3js.org/d3.v4.min.js"></script>
+        <script src="./static/RadarChart.js"></script>
+        <script src="./static/parcoords.standalone.js"></script>
+        <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.0.0-beta1/jquery.min.js"></script> -->
+        <!-- <script src="https://code.jquery.com/ui/1.11.3/jquery-ui.min.js"></script> -->
+        <script type="text/javascript" src="./static/script.js"></script>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+        <link rel="stylesheet" href="./static/style.css">
+
+        <title> Visualization Project </title>
+    </head>
+    <body>
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-5"> <h3>FIFA 20 Players Data Visualization</h3> </div>
+                <div class="col-7"></div>
+            </div>
+
+            <div class="row mainRow h-100" style="margin-left:0.5px">
+<!--                 <div class="col-8 h-75 viz" style="border: none;"></div>
+                <div id="table" class="col-4 h-75" style="border: none;"></div> -->
+
+
+                <div id="chart" class="col-8 h-75" 
+                style="border-style: solid; border-width: 1px;"></div>
+                <div class="col-4 h-75 table-responsive-sm" id="table">
+                    <table class="table table-dark table-sm">
+                        <tr>
+                            <th scope="col">Position</th>
+                            <th scope="col">Name</th>
+                            <th scope="col">Club</th>
+                            <th scope="col">Overall</th>
+                            <th scope="col">Transfer Value</th>
+                        </tr>
+                    </table>
+
+
+                    <div class="card" style="width: 95%;margin-top:0px;"id="card">
+                        <img class="card-img-top text-center" src="" alt="Player Image" 
+                                style="width:100px;height:100px;margin-left:140px">
+                        <div class="card-body"></div>
+                    </div>
+                </div>
+
+                <div class="w-100" style="margin-top:5px;"></div>
+                <div id="example" class="parcoords" style="width:1000px; height:270px"></div>
+                <div class="col" id="chart0" style="margin-top:35px"></div>
+                <div class="col" id="chart1" style="margin-top:35px"></div>
+                <div class="col" id="chart2" style="margin-top:35px"></div>
+                <div class="col" id="chart3" style="margin-top:35px"></div>
+            </div>
+        </div>
+
+
+        <script src="./static/main.js"></script>
+
+
+
+
+    <script type="text/javascript">
+
+clearAllRadarCharts()
+d3.select("#table").style("visibility", "hidden")
+var ds ={{ data.value_data | safe }};
+var ds1 ={{ data.wage_data | safe }};
+
+//Data
+var d = [
+          [
+            {axis:"Shooting",value:92},
+            {axis:"Dribbling",value:96},
+            {axis:"Passing",value:92},
+            {axis:"Crossing",value:88},
+            {axis:"Finishing",value:95},
+            {axis:"Heading",value:70},
+            {axis:"Short Passing",value:92},
+            {axis:"Volleys",value:88},
+            {axis:"Shot Curve",value:93},
+            {axis:"Freekick Acc",value:94},
+            {axis:"Long Passing",value:92},
+            {axis:"Ball Control",value:96},
+          ]
+        ];
+
+//Options for the Radar chart, other than default
+var mycfg = {
+  w: 150,
+  h: 150,
+  maxValue: 1,
+  levels: 5,
+  ExtraWidthX: 100
+}
+
+//Call function to draw the Radar chart
+//Will expect that data is in %'s
+// RadarChart.draw("#chart0", d, mycfg, "attack");
+// RadarChart.draw("#chart1", d, mycfg, "defense");
+// RadarChart.draw("#chart2", d, mycfg, "physical");
+
+
+    </script>
+
+
+    </body>
+
 </html>
